@@ -1,0 +1,15 @@
+{
+  "main_domain": "futurex.sa",
+
+  "microsites": {
+    "IAU": {
+      "name": "Imam abdulrahman bin faisal university"
+    },
+    "QU": {
+      "name": "Qassim University"
+    },
+    "JOUF": {
+      "name": "Jouf university"
+    }
+  }
+}

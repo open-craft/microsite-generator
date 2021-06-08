@@ -1,0 +1,26 @@
+main_domain: "futurex.sa"
+site_for_each_organization: true
+organizations:
+  IAU:
+    name: "Imam abdulrahman bin faisal university"
+  QU:
+    name: "Qassim University"
+  JOUF:
+    name: "Jouf university"
+microsites:
+  $:
+    context_overrides: {}
+    overrides:
+      ecommerce:
+        ecommerce.core.models.SiteConfiguration:
+          oauth_settings:
+            SOCIAL_AUTH_EDX_OAUTH2_SECRET: test-secret
+  IAU:
+    overrides:
+      ecommerce:
+        ecommerce.core.models.SiteConfiguration:
+          payment_processors: paypal,cybersource
+      lms:
+        openedx.core.djangoapps.site_configuration.models.SiteConfiguration:
+          site_values:
+            arabic_name: Some arabic string

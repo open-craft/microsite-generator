@@ -64,5 +64,4 @@ def run(config_file_path, settings_module):
 if __name__ == '__main__':
     parser = common_args()
     cli_args = parser.parse_args()
-    import pdb; pdb.set_trace()
     run(cli_args.ConfigFilePath, cli_args.settings)

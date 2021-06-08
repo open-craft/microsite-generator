@@ -1,22 +1,26 @@
 
-dev.run-lms:
-	python scripts/generate_lms.py config/config.yaml --settings lms.envs.devstack_docker
-
-dev.run-discovery:
-	python scripts/generate_discovery.py config/config.yaml --settings course_discovery.settings.devstack
-
-dev.run-ecommerce:
-	python scripts/generate_ecommerce.py config/config.yaml --settings ecommerce.settings.devstack
+help:    ## Show help.
+	@fgrep -h "##" $(MAKEFILE_LIST) | fgrep -v fgrep | sed -e 's/\\$$//' | sed -e 's/##//'
 
 
-run-lms:
+run: ## Generate microsite configuration for all services
+run: run-lms run-discovery run-ecommerce
+
+run-lms: ## Generate microsite configuration in LMS
 	bash -c "source /edx/app/edxapp/venvs/edxapp/bin/activate && python scripts/generate_lms.py config/config.yaml --settings lms.envs.production"
 
-run-discovery:
+run-discovery: ## Generate microsite configuration in Discovery
 	bash -c "source /edx/app/discovery/venvs/discovery/bin/activate && python scripts/generate_discovery.py config/config.yaml --settings course_discovery.settings.production"
 
-run-ecommerce:
+run-ecommerce:  ## Generate microsite configuration in eCommerce
 	bash -c "source /edx/app/ecommerce/venvs/ecommerce/bin/activate && python scripts/generate_ecommerce.py config/config.yaml --settings ecommerce.settings.production"
 
 
-run: run-lms run-discovery run-ecommerce
+dev.run-lms:    ## Devstack - Generate microsite configuration in LMS
+	python scripts/generate_lms.py config/config.yaml --settings lms.envs.devstack_docker
+
+dev.run-discovery:  ## Devstack - Generate microsite configuration in Discovery
+	python scripts/generate_discovery.py config/config.yaml --settings course_discovery.settings.devstack
+
+dev.run-ecommerce:  ## Devstack - Generate microsite configuration in eCommerce
+	python scripts/generate_ecommerce.py config/config.yaml --settings ecommerce.settings.devstack

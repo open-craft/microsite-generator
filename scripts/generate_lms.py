@@ -59,6 +59,25 @@ def create_site_configurations(config, sites):
         if not created:
             update_model(sc, **site_configuration)
 
+
+def add_ecommerce_redirect_urls(config):
+    from oauth2_provider.models import Application
+
+    redirect_uris = []
+    for code in config.get_microsite_codes():
+        context = config.get_context(code)
+        redirect_uris.append('{}/complete/edx-oauth2/'.format(context['ecommerce_url']))
+
+    ecommerce_app = Application.objects.get(name='ecommerce-sso')
+    if ecommerce_app.redirect_uris:
+        redirect_uris += ecommerce_app.redirect_uris.split()
+
+    redirect_uris_str = ' '.join(set(redirect_uris))
+    logger.info('Adding ecommerce to redirect url {}'.format(redirect_uris_str))
+    ecommerce_app.redirect_uris = redirect_uris_str
+    ecommerce_app.save()
+
+
 def run(config_file_path, settings_module):
 
     sys.path.append('/edx/app/edxapp/edx-platform')
@@ -72,6 +91,7 @@ def run(config_file_path, settings_module):
     create_organizations(config)
     sites = create_sites(config)
     create_site_configurations(config, sites)
+    add_ecommerce_redirect_urls(config)
 
 
 if __name__ == '__main__':

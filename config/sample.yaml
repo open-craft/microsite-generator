@@ -14,7 +14,11 @@ microsites:
       ecommerce:
         ecommerce.core.models.SiteConfiguration:
           oauth_settings:
-            SOCIAL_AUTH_EDX_OAUTH2_SECRET: test-secret
+            SOCIAL_AUTH_EDX_OAUTH2_KEY: ecommerce-sso client id
+            SOCIAL_AUTH_EDX_OAUTH2_SECRET: ecommerce-sso client secret
+            BACKEND_SERVICE_EDX_OAUTH2_KEY: ecommerce-backend-service client id
+            BACKEND_SERVICE_EDX_OAUTH2_SECRET: ecommerce-backend-service client secret
+
   IAU:
     overrides:
       ecommerce:

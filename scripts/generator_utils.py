@@ -44,16 +44,14 @@ class Config:
     Configuration generation helper class
     """
 
-    # key value map of microsites
     microsites = {}
 
-    # key value map of organiztions
     organizations = {}
 
     # main domain to work with
     main_domain = None
 
-    # holder for storing global override values
+    # stores global override values
     global_overrides = {
         'overrides': {},
         'context_overrides': {},

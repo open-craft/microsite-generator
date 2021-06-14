@@ -67,6 +67,38 @@ class Config:
         self.organizations = config['organizations']
         self.main_domain = config['main_domain']
 
+        self._extract_microsites(config)
+        self._extract_overrides(config)
+
+    def _extract_overrides(self, config):
+        """
+        A helper method to prepare self.overrides from given config.
+        """
+        if config['microsites']:
+            for key, val in config['microsites'].items():
+                 # $ is a special key and used for global overrides
+                if key == '$':
+                    self.global_overrides.update(val)
+                    continue
+
+                # if site specifc override provided, add them to self.microsites
+                if val.get('overrides'):
+                    self.microsites[key]['overrides'] = deep_merge(
+                        self.microsites[key]['overrides'],
+                        val['overrides']
+                    )
+
+                # if site specifc context override provided, add them to self.microsites
+                if val.get('context_overrides'):
+                    self.microsites[key]['context_overrides'] = deep_merge(
+                        self.microsites[key]['context_overrides'],
+                        val['context_overrides']
+                    )
+
+    def _extract_microsites(self, config):
+        """
+        A helper method to prepare self.microsites from given config.
+        """
         # if there will be a site for each organization
         if config.get('site_for_each_organization', False):
             for key, val in config['organizations'].items():
@@ -86,7 +118,6 @@ class Config:
         else:
             # otherwise microsites can be given seperately from organizations
             for key, val in config['microsites'].items():
-
                 # $ is a special key and used for global overrides
                 if key == '$':
                     continue
@@ -96,29 +127,6 @@ class Config:
                     'overrides': {},
                     'context_overrides': {},
                 }
-
-
-        if config['microsites']:
-            for key, val in config['microsites'].items():
-
-                 # $ is a special key and used for global overrides
-                if key == '$':
-                    self.global_overrides.update(val)
-                    continue
-
-                # if site specifc override provided, add them to self.microsites
-                if val.get('overrides'):
-                    self.microsites[key]['overrides'] = deep_merge(
-                        self.microsites[key]['overrides'],
-                        val['overrides']
-                    )
-
-                # if site specifc context override provided, add them to self.microsites
-                if val.get('context_overrides'):
-                    self.microsites[key]['context_overrides'] = deep_merge(
-                        self.microsites[key]['context_overrides'],
-                        val['context_overrides']
-                    )
 
     def get_microsite_codes(self):
         """

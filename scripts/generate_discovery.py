@@ -2,6 +2,7 @@ from collections import defaultdict
 import sys
 import os
 import logging
+from const import DISCOVERY_ROOT_DIR
 from generator_utils import load_config, common_args, update_model
 
 
@@ -9,6 +10,14 @@ logger = logging.getLogger(__name__)
 
 
 def create_sites(config):
+    """
+    Create custom sites in discovery service.
+
+    Args:
+        config (Config)
+    Returns:
+        sites (dict): A mapping of custom site code and site instance
+    """
     from django.contrib.sites.models import Site
 
     sites = {}
@@ -25,6 +34,13 @@ def create_sites(config):
 
 
 def create_partner(config, sites):
+    """
+    Create Partner for each custom sites in discovery service.
+
+    Args:
+        config (Config)
+        sites (dict)
+    """
     from course_discovery.apps.core.models import Partner
 
     for code in config.get_microsite_codes():
@@ -42,14 +58,21 @@ def create_partner(config, sites):
         }
         partner = config.apply_overrides(code, 'discovery', Partner, partner)
         logger.info('Creating partner for {} - {}'.format(code, partner))
-        p, created = Partner.objects.get_or_create(site=partner['site'], defaults=partner)
+        partner_obj, created = Partner.objects.get_or_create(site=partner['site'], defaults=partner)
         if not created:
-            update_model(p, **partner)
+            update_model(partner_obj, **partner)
 
 
 def run(config_file_path, settings_module):
+    """
+    Given a configuration file path and django settings module,
+    load discovery service django app and generate custom sites.
 
-    sys.path.append('/edx/app/discovery/discovery')
+    Args:
+        config_file_path (str)
+        settings_module (str)
+    """
+    sys.path.append(DISCOVERY_ROOT_DIR)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)
 
     import django

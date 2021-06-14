@@ -2,6 +2,7 @@ from collections import defaultdict
 import sys
 import os
 import logging
+from const import LMS_ROOT_DIR
 from generator_utils import load_config, common_args, update_model
 
 
@@ -9,6 +10,12 @@ logger = logging.getLogger(__name__)
 
 
 def create_organizations(config):
+    """
+    Create Organizations in LMS.
+
+    Args:
+        config (Config)
+    """
     from common.djangoapps.util.organizations_helpers import add_organization
 
     for code in config.get_organization_codes():
@@ -21,6 +28,14 @@ def create_organizations(config):
 
 
 def create_sites(config):
+    """
+    Create custom sites in LMS.
+
+    Args:
+        config (Config)
+    Returns:
+        sites (dict): A mapping of custom site code and site instance
+    """
     from django.contrib.sites.models import Site
 
     sites = {}
@@ -36,7 +51,15 @@ def create_sites(config):
         sites[code] = site
     return sites
 
+
 def create_site_configurations(config, sites):
+    """
+    Create SiteConfiguration for each custom sites in LMS.
+
+    Args:
+        config (Config)
+        sites (dict)
+    """
     from openedx.core.djangoapps.site_configuration.models import SiteConfiguration
 
     for code in config.get_microsite_codes():
@@ -55,12 +78,18 @@ def create_site_configurations(config, sites):
         }
         site_configuration = config.apply_overrides(code, 'lms', SiteConfiguration, site_configuration)
         logger.info('Creating SiteConfiguration for {} - {}'.format(code, site_configuration))
-        sc, created = SiteConfiguration.objects.get_or_create(site=site_configuration['site'], defaults=site_configuration)
+        site_config_obj, created = SiteConfiguration.objects.get_or_create(site=site_configuration['site'], defaults=site_configuration)
         if not created:
-            update_model(sc, **site_configuration)
+            update_model(site_config_obj, **site_configuration)
 
 
 def add_ecommerce_redirect_urls(config):
+    """
+    Add eCommerce Oauth redirect url for each custom sites in LMS.
+
+    Args:
+        config (Config)
+    """
     from oauth2_provider.models import Application
 
     redirect_uris = []
@@ -79,8 +108,15 @@ def add_ecommerce_redirect_urls(config):
 
 
 def run(config_file_path, settings_module):
+    """
+    Given a configuration file path and django settings module,
+    load eCommerce service django app and generate custom sites.
 
-    sys.path.append('/edx/app/edxapp/edx-platform')
+    Args:
+        config_file_path (str)
+        settings_module (str)
+    """
+    sys.path.append(LMS_ROOT_DIR)
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', settings_module)  # for production use lms.envs.production
 
     import django

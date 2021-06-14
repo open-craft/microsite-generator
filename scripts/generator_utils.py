@@ -185,7 +185,7 @@ class Config:
 
     def apply_overrides(self, code, service, model_class, data):
         """
-        Apply override values to a model data.
+        Overrides existing value with global or site-specific value.
 
         Args:
             code (str): microsite code

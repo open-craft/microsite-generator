@@ -42,7 +42,7 @@ dev.run-ecommerce:   Devstack - Generate microsite configuration in eCommerce
     ```
 
 ### Overrides
-It might be necessary to override some value of some field in microsite configuration. For that we have following options -
+To override values of fields in microsite configuration, we have the following options -
 
 #### Context Override
 

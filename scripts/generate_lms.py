@@ -73,6 +73,7 @@ def create_site_configurations(config, sites):
                 'SITE_NAME': context['lms_domain'],
                 'LMS_ROOT_URL': context['lms_url'],
                 'LMS_BASE': context['lms_url'],
+                'PREVIEW_LMS_BASE': 'preview.{}'.format(context['lms_domain']),
                 'ECOMMERCE_PUBLIC_URL_ROOT': context['ecommerce_url'],
                 'COURSE_CATALOG_API_URL': context['discovery_api_url'],
             }

@@ -2,9 +2,19 @@
 
 Generates MicroSites for an edX installation.
 
+# Installation
+
+
+- **Local Devstack**: Clone this repo in `src` directory
+- **Production**: Clone this repo in the home directory of an appserver
+```
+git clone https://github.com/open-craft/microsite-generator.git
+```
+
 # Usage
 
 - Copy `config/sample.yaml` to `config/config.yaml`.
+- Edit `config/config.yaml` to match your needs. `config/sample.yaml` is a good starting point to check, which things usually needs to be configured.
 - Check `Makefile` for available commands.
 ```
 make help
@@ -20,6 +30,8 @@ dev.run-lms:     Devstack - Generate microsite configuration in LMS
 dev.run-discovery:   Devstack - Generate microsite configuration in Discovery
 dev.run-ecommerce:   Devstack - Generate microsite configuration in eCommerce
 ```
+
+**Note**: If you are using a docker devstack, you should use ``dev.*`` variants. And only run these commands in correct service containers. For example `dev.run-lms` in `LMS` container only.
 # Structure of config file
 
 `config/config.yaml` file contains following features -

@@ -2,7 +2,7 @@ from collections import defaultdict
 import sys
 import os
 import logging
-from const import LMS_ROOT_DIR
+from const import LMS_ROOT_DIR, ECOMMERCE_SSO_CLIENT
 from generator_utils import load_config, common_args, update_model
 
 
@@ -97,7 +97,10 @@ def add_ecommerce_redirect_urls(config):
         context = config.get_context(code)
         redirect_uris.append('{}/complete/edx-oauth2/'.format(context['ecommerce_url']))
 
-    ecommerce_app = Application.objects.get(name='ecommerce-sso')
+    # We expect ecommerce sso client to be present in the installation.
+    # Since it should be created as part of Open edX deployment.
+    # https://github.com/edx/configuration/blob/master/playbooks/roles/oauth_client_setup/defaults/main.yml
+    ecommerce_app = Application.objects.get(name=ECOMMERCE_SSO_CLIENT)
     if ecommerce_app.redirect_uris:
         redirect_uris += ecommerce_app.redirect_uris.split()
 

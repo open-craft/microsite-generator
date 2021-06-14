@@ -3,7 +3,7 @@ import sys
 import os
 import logging
 from const import LMS_ROOT_DIR, ECOMMERCE_SSO_CLIENT
-from generator_utils import load_config, common_args, update_model
+from generator_utils import load_config, common_args, update_model, deep_merge
 
 
 logger = logging.getLogger(__name__)
@@ -70,6 +70,7 @@ def create_site_configurations(config, sites):
             'site_values': {
                 'PLATFORM_NAME': context['name'],
                 'Platform_name': context['name'],
+                'SITE_NAME': context['lms_domain'],
                 'LMS_ROOT_URL': context['lms_url'],
                 'LMS_BASE': context['lms_url'],
                 'ECOMMERCE_PUBLIC_URL_ROOT': context['ecommerce_url'],
@@ -80,6 +81,11 @@ def create_site_configurations(config, sites):
         logger.info('Creating SiteConfiguration for {} - {}'.format(code, site_configuration))
         site_config_obj, created = SiteConfiguration.objects.get_or_create(site=site_configuration['site'], defaults=site_configuration)
         if not created:
+            # while regenerating, we want to keep whatever value has been edited from django admin intact!
+            site_values = deep_merge(
+                site_config_obj.site_values, site_configuration['site_values']
+            )
+            site_configuration['site_values'] = site_values
             update_model(site_config_obj, **site_configuration)
 
 

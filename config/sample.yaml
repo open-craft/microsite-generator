@@ -1,12 +1,10 @@
-main_domain: "futurex.sa"
+main_domain: "example.com"
 site_for_each_organization: true
 organizations:
-  IAU:
-    name: "Imam abdulrahman bin faisal university"
-  QU:
-    name: "Qassim University"
-  JOUF:
-    name: "Jouf university"
+  A:
+    name: "A Organization"
+  B:
+    name: "B Organization"
 microsites:
   $:
     context_overrides: {}
@@ -18,13 +16,11 @@ microsites:
             SOCIAL_AUTH_EDX_OAUTH2_SECRET: ecommerce-sso client secret
             BACKEND_SERVICE_EDX_OAUTH2_KEY: ecommerce-backend-service client id
             BACKEND_SERVICE_EDX_OAUTH2_SECRET: ecommerce-backend-service client secret
-
-  IAU:
-    overrides:
-      ecommerce:
-        ecommerce.core.models.SiteConfiguration:
           payment_processors: paypal,cybersource
+
+  A:
+    overrides:
       lms:
         openedx.core.djangoapps.site_configuration.models.SiteConfiguration:
           site_values:
-            arabic_name: Some arabic string
+            PLATFORM_NAME: Something Special!

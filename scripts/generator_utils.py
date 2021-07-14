@@ -1,5 +1,7 @@
 import yaml
+import os
 from argparse import ArgumentParser
+from const import GENERATED_SHARED_CONFIG_FILE
 
 
 def common_args() -> ArgumentParser:
@@ -51,6 +53,12 @@ class Config:
     # main domain to work with
     main_domain = None
 
+    # LMS OAuth clients
+    oauth = {
+        'ecommerce_sso_client': 'custom-sites-ecommerce-sso',
+        'ecommerce_backend_service_client': 'ecommerce-backend-service',
+    }
+
     # stores global override values
     global_overrides = {
         'overrides': {},
@@ -64,6 +72,11 @@ class Config:
         self._config = config
         self.organizations = config['organizations']
         self.main_domain = config['main_domain']
+
+        self.oauth = config.get(
+            'oauth',
+            self.oauth
+        )
 
         self._extract_microsites(config)
         self._extract_overrides(config)
@@ -215,3 +228,24 @@ def load_config(file_path) -> Config:
     with open(file_path) as file:
         config = yaml.load(file)
     return Config(config)
+
+
+def write_generated_values(data = {}):
+    """
+    Write new config value to the generated config file.
+    """
+    values = load_generated_values()
+    values.update(data)
+    with open(GENERATED_SHARED_CONFIG_FILE, 'w') as file:
+        yaml.dump(values, file)
+
+
+def load_generated_values():
+    """
+    Read config value from the generated config file.
+    """
+    values = {}
+    if os.path.exists(GENERATED_SHARED_CONFIG_FILE):
+        with open(GENERATED_SHARED_CONFIG_FILE) as file:
+            values = yaml.load(file)
+    return values

@@ -56,7 +56,6 @@ class Config:
     # LMS OAuth clients
     oauth = {
         'ecommerce_sso_client': 'custom-sites-ecommerce-sso',
-        'ecommerce_backend_service_client': 'ecommerce-backend-service',
     }
 
     # stores global override values

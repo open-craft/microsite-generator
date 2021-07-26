@@ -130,14 +130,10 @@ def share_sso_credentials(config):
     from oauth2_provider.models import Application
 
     ecommerce_sso = Application.objects.get(name=config.oauth['ecommerce_sso_client'])
-    ecommerce_backend_service = Application.objects.get(name=config.oauth['ecommerce_backend_service_client'])
 
     write_generated_values({
         'SOCIAL_AUTH_EDX_OAUTH2_KEY': ecommerce_sso.client_id,
         'SOCIAL_AUTH_EDX_OAUTH2_SECRET': ecommerce_sso.client_secret,
-
-        'BACKEND_SERVICE_EDX_OAUTH2_KEY': ecommerce_backend_service.client_id,
-        'BACKEND_SERVICE_EDX_OAUTH2_SECRET': ecommerce_backend_service.client_secret,
     })
 
 

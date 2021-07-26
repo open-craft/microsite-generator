@@ -90,8 +90,6 @@ def create_site_configuration(config, sites, partners):
                 'SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL': '{}/logout'.format(context['lms_url']),
                 'SOCIAL_AUTH_EDX_OAUTH2_KEY': generated_values.get('SOCIAL_AUTH_EDX_OAUTH2_KEY'),
                 'SOCIAL_AUTH_EDX_OAUTH2_SECRET': generated_values.get('SOCIAL_AUTH_EDX_OAUTH2_SECRET'),
-                'BACKEND_SERVICE_EDX_OAUTH2_KEY': generated_values.get('BACKEND_SERVICE_EDX_OAUTH2_KEY'),
-                'BACKEND_SERVICE_EDX_OAUTH2_SECRET': generated_values.get('BACKEND_SERVICE_EDX_OAUTH2_SECRET'),
             }
         }
 

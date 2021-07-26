@@ -1,5 +1,7 @@
 main_domain: "example.com"
 site_for_each_organization: true
+oauth:
+  ecommerce_sso_client: custom-sites-ecommerce-sso
 organizations:
   A:
     name: "A Organization"

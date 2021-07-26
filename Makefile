@@ -12,7 +12,7 @@ run-lms: ## Generate microsite configuration in LMS
 run-discovery: ## Generate microsite configuration in Discovery
 	bash -c "source /edx/app/discovery/discovery_env && python scripts/generate_discovery.py config/config.yaml --settings course_discovery.settings.production"
 
-run-ecommerce:  ## Generate microsite configuration in eCommerce
+run-ecommerce:  ## Generate microsite configuration in eCommerce. Must be run after `run-lms`
 	bash -c "source /edx/app/ecommerce/ecommerce_env && python scripts/generate_ecommerce.py config/config.yaml --settings ecommerce.settings.production"
 
 

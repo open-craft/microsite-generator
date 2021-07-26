@@ -2,8 +2,8 @@ from collections import defaultdict
 import sys
 import os
 import logging
-from const import LMS_ROOT_DIR, ECOMMERCE_SSO_CLIENT
-from generator_utils import load_config, common_args, update_model, deep_merge
+from const import LMS_ROOT_DIR
+from generator_utils import load_config, common_args, update_model, deep_merge, write_generated_values
 
 
 logger = logging.getLogger(__name__)
@@ -98,16 +98,22 @@ def add_ecommerce_redirect_urls(config):
         config (Config)
     """
     from oauth2_provider.models import Application
+    from django.contrib.auth import get_user_model
 
     redirect_uris = []
     for code in config.get_microsite_codes():
         context = config.get_context(code)
         redirect_uris.append('{}/complete/edx-oauth2/'.format(context['ecommerce_url']))
 
-    # We expect ecommerce sso client to be present in the installation.
-    # Since it should be created as part of Open edX deployment.
-    # https://github.com/edx/configuration/blob/master/playbooks/roles/oauth_client_setup/defaults/main.yml
-    ecommerce_app = Application.objects.get(name=ECOMMERCE_SSO_CLIENT)
+    ecommerce_app, created = Application.objects.get_or_create(name=config.oauth['ecommerce_sso_client'])
+
+    if created:
+        ecommerce_app.client_type = 'confidential'
+        ecommerce_app.authorization_grant_type = 'authorization-code'
+        ecommerce_app.user = get_user_model().objects.get(username='ecommerce_worker')
+        ecommerce_app.skip_authorization = True
+        ecommerce_app.save()
+
     if ecommerce_app.redirect_uris:
         redirect_uris += ecommerce_app.redirect_uris.split()
 
@@ -115,6 +121,20 @@ def add_ecommerce_redirect_urls(config):
     logger.info('Adding ecommerce to redirect url {}'.format(redirect_uris_str))
     ecommerce_app.redirect_uris = redirect_uris_str
     ecommerce_app.save()
+
+
+def share_sso_credentials(config):
+    """
+    Writes OAuth client credentials in the shared generated config file.
+    """
+    from oauth2_provider.models import Application
+
+    ecommerce_sso = Application.objects.get(name=config.oauth['ecommerce_sso_client'])
+
+    write_generated_values({
+        'SOCIAL_AUTH_EDX_OAUTH2_KEY': ecommerce_sso.client_id,
+        'SOCIAL_AUTH_EDX_OAUTH2_SECRET': ecommerce_sso.client_secret,
+    })
 
 
 def run(config_file_path, settings_module):
@@ -138,6 +158,7 @@ def run(config_file_path, settings_module):
     sites = create_sites(config)
     create_site_configurations(config, sites)
     add_ecommerce_redirect_urls(config)
+    share_sso_credentials(config)
 
 
 if __name__ == '__main__':

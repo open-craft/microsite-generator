@@ -3,7 +3,7 @@ import sys
 import os
 import logging
 from const import ECOMMERCE_ROOT_DIR
-from generator_utils import load_config, common_args, update_model
+from generator_utils import load_config, common_args, update_model, load_generated_values
 
 
 logger = logging.getLogger(__name__)
@@ -72,6 +72,8 @@ def create_site_configuration(config, sites, partners):
     """
     from ecommerce.core.models import SiteConfiguration
 
+    generated_values = load_generated_values()
+
     for code in config.get_microsite_codes():
         context = config.get_context(code)
 
@@ -85,7 +87,9 @@ def create_site_configuration(config, sites, partners):
                 'SOCIAL_AUTH_EDX_OAUTH2_ISSUERS': [
                     context['lms_url']
                 ],
-                'SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL': '{}/logout'.format(context['lms_url'])
+                'SOCIAL_AUTH_EDX_OAUTH2_LOGOUT_URL': '{}/logout'.format(context['lms_url']),
+                'SOCIAL_AUTH_EDX_OAUTH2_KEY': generated_values.get('SOCIAL_AUTH_EDX_OAUTH2_KEY'),
+                'SOCIAL_AUTH_EDX_OAUTH2_SECRET': generated_values.get('SOCIAL_AUTH_EDX_OAUTH2_SECRET'),
             }
         }
 

@@ -37,6 +37,8 @@ dev.run-ecommerce:   Devstack - Generate microsite configuration in eCommerce
 `config/config.yaml` file contains following features -
 
 - `main_domain`: The base domain. Each microsite will be set as subdomain of this domain.
+- `oauth`: OAuth applications in LMS
+    - `ecommerce_sso_client`: eCommerce SSO Client name, defaults to `custom-sites-ecommerce-sso`. It is intentionally a different one than the one found by default in an Open edX installation, since the default one resets on every deployment. But we need to have redirect URIs for dynamic custom sites. Generator will create this client autometically if not found.
 - `site_for_each_organization`: Set this to `true` if each organization will have a microsite. Then the script will automatically copy `organizations` as `microsites`.
 - `organizations`: A dictionary containing organization related info
     ```yaml
